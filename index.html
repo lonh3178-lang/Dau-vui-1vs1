@@ -200,23 +200,36 @@ async function joinRoom(){
  try{
   await login();
   roomId=code;
-  const result=await runTransaction(roomRef(),r=>{
-   if(!r||r.status!=="waiting"||r.players?.p2)return;
-   if(r.players?.p1?.uid===uid)return r;
-   r.players.p2={uid,name,score:0,done:false};
+  
+const result=await runTransaction(roomRef(),r=>{
+   if(!r)return;
+   if(r.status!=="waiting")return;
+   if(!r.players?.p1)return;
+   if(r.players.p1.uid===uid)return r;
+   if(r.players.p2)return;
+   r.players.p2={uid:uid,name:name,score:0,done:false};
    return r;
   });
-  if(!result.committed)throw Error("Phòng không tồn tại, đã đủ người hoặc trận đã bắt đầu.");
+
+  if(!result.committed)
+   throw Error("Phòng không tồn tại, đã đủ người hoặc trận đã bắt đầu.");
+
   const r=result.snapshot.val();
   slot=r.players.p1.uid===uid?"p1":"p2";
+
   if(slot==="p1"&&r.players.p2?.uid!==uid)
    throw Error("Ông đã là người tạo phòng này.");
+
   listen();
-  show("home",false);show("room");show("game",false);show("result",false);
+  show("home",false);
+  show("room");
+  show("game",false);
+  show("result",false);
   say("Đã vào phòng "+code);
  }catch(e){error(e)}
- finally{$("join").disabled=false}
-}
+  finally{$("join").disabled=false}
+  }
+  
 
 function listen(){
  if(stopListening)stopListening();
