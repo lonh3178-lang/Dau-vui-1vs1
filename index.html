@@ -3,479 +3,366 @@ HTML
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Đấu Vui 1v1</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101322;color:white;font-family:Arial,sans-serif}
-main{max-width:650px;margin:auto;padding:20px}
-h1{text-align:center;color:#70e1ff;font-size:32px}
-.card{background:#20263c;padding:18px;border-radius:16px;margin:14px 0}
-input,button{width:100%;padding:13px;margin:6px 0;border:0;border-radius:10px;font-size:16px}
-input{background:#111729;color:white;border:1px solid #53617f}
-button{background:#55d6f5;color:#101322;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.4}
-.secondary{background:#39425e;color:white}
-.levels{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.levels button{padding:12px 2px}
-.selected{background:#ffce5b!important;color:#161616!important}
+body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
+main{max-width:600px;margin:auto;padding:18px}
+h1{text-align:center;color:#a99aff;font-size:34px}
+p{color:#c4cbe0;line-height:1.5}
+.card{background:#17213a;border:1px solid #354365;border-radius:16px;padding:17px;margin:15px 0}
+input,button{width:100%;padding:13px;margin:7px 0;border-radius:10px;font-size:16px}
+input{background:#0c1428;color:white;border:1px solid #465578}
+button{border:0;background:#795cff;color:white;font-weight:bold}
+button:disabled{opacity:.5}
+.secondary{background:#30405f}
 .hidden{display:none!important}
-.small{color:#bdc8e3;font-size:14px}
-#status{white-space:pre-wrap;color:#ffe08a}
-#question{font-size:22px;line-height:1.4}
-.answer{text-align:left;background:#39425e;color:white}
+.code{text-align:center;font-size:30px;letter-spacing:5px;color:#b8aaff;font-weight:bold}
+.players{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.player{background:#0d162b;border-radius:10px;padding:12px;overflow-wrap:anywhere}
+.small{font-size:13px;color:#bfc9e2}
+.question{font-size:20px;line-height:1.5;font-weight:bold;margin:20px 0}
+.answer{background:#2b3959;text-align:left}
+.answer:disabled{opacity:1}
+.status{background:#0d162b;border-radius:10px;padding:12px;margin:10px 0;overflow-wrap:anywhere}
+.good{border:2px solid #39d6a0}
+.bad{border:2px solid #ff647c}
 </style>
 </head>
 <body>
 <main>
 <h1>⚔️ ĐẤU VUI 1v1</h1>
-<p style="text-align:center">Thách đấu bạn bè · 10 cấp độ · Ai thông minh hơn?</p>
-<div id="status" class="card">Đang kết nối...</div>
+<p style="text-align:center">Hai người chơi · Hai bộ câu hỏi · Một nhà vô địch</p>
 
-<section id="home" class="card hidden">
-<h2>Vào trận</h2>
-<input id="playerName" maxlength="18" placeholder="Tên của ông">
-<button id="createBtn">＋ Tạo phòng mới</button>
-<hr>
-<input id="roomInput" maxlength="6" placeholder="Nhập mã phòng">
-<button id="joinBtn" class="secondary">Tham gia phòng</button>
+<section id="home" class="card">
+<h2>🎮 Vào trận</h2>
+<input id="name" maxlength="20" placeholder="Nhập tên của bạn">
+<button id="create">＋ Tạo phòng mới</button>
+<input id="code" maxlength="6" placeholder="Nhập mã phòng 6 ký tự">
+<button id="join" class="secondary">Tham gia phòng</button>
 </section>
 
-<section id="lobby" class="card hidden">
-<h2>Phòng: <span id="roomCode"></span></h2>
-<button id="copyBtn" class="secondary">Sao chép mã phòng</button>
-<p id="players"></p>
-<h3>Chọn cấp độ (cả hai phải chọn giống nhau)</h3>
-<div id="levels" class="levels"></div>
-<p id="levelInfo" class="small"></p>
-<button id="readyBtn">Tôi đã sẵn sàng</button>
-<button id="startBtn" class="hidden">Bắt đầu trận!</button>
+<section id="room" class="card hidden">
+<h2>🏠 Phòng đấu</h2>
+<p>Mã phòng — gửi mã này cho bạn của bạn:</p>
+<div id="roomCode" class="code"></div>
+<button id="copy" class="secondary">Sao chép mã phòng</button>
+<div class="players">
+<div class="player"><div class="small">Người chơi 1</div><b id="name1">Đang chờ...</b><p id="score1">0 điểm</p></div>
+<div class="player"><div class="small">Người chơi 2</div><b id="name2">Đang chờ...</b><p id="score2">0 điểm</p></div>
+</div>
+<div id="roomStatus" class="status">Đang kết nối...</div>
+<button id="start" class="hidden">Bắt đầu trận đấu</button>
+<button id="leave" class="secondary">Rời phòng</button>
 </section>
 
 <section id="game" class="card hidden">
-<p id="round"></p>
-<h2 id="question"></h2>
+<div id="round" class="small"></div>
+<div id="points" class="status">Điểm: 0</div>
+<div id="question" class="question"></div>
 <div id="answers"></div>
-<p id="answerStatus" class="small"></p>
+<div id="answerStatus" class="status">Chọn một đáp án.</div>
+<button id="next" class="hidden">Câu tiếp theo</button>
 </section>
 
 <section id="result" class="card hidden">
-<h2>🏆 Kết quả trận đấu</h2>
+<h2>🏆 Kết quả</h2>
 <h2 id="winner"></h2>
-<p id="finalScores"></p>
-<button id="againBtn">Trở về sảnh</button>
+<div class="players">
+<div class="player"><b id="finalName1"></b><p id="finalScore1"></p></div>
+<div class="player"><b id="finalName2"></b><p id="finalScore2"></p></div>
+</div>
+<button id="again">Về màn hình đầu</button>
 </section>
+
+<div id="message" class="status">Đang kết nối Firebase...</div>
 </main>
 
-
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
-  import {
-    getAuth,
-    signInAnonymously
-  } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+import {initializeApp}
+from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+import {getAuth,signInAnonymously}
+from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+import {getDatabase,ref,get,set,update,onValue,runTransaction}
+from "https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDf66je79wf7J31bfZ0qx5VsqBdoQyTRsA",
-    authDomain: "dau-vui-1vs1.firebaseapp.com",
-    databaseURL: "https://dau-vui-1vs1-default-rtdb.firebaseio.com",
-    projectId: "dau-vui-1vs1",
-    storageBucket: "dau-vui-1vs1.firebasestorage.app",
-    messagingSenderId: "261471198978",
-    appId: "1:261471198978:web:b759adf6e96f9cb3942c1b",
-    measurementId: "G-Z2CSNMLCZ3"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  signInAnonymously(auth)
-    .then(() => console.log("Firebase đăng nhập thành công"))
-    .catch((error) => console.error("Lỗi Firebase:", error));
-</script>
-  
-/*
-  QUAN TRỌNG:
-  Thay cấu hình bên dưới bằng firebaseConfig THẬT
-  của dự án Firebase cũ của ông.
-*/
 const firebaseConfig = {
-  apiKey: "DAN_API_KEY_CUA_PROJECT",
-  authDomain: "TEN_PROJECT.firebaseapp.com",
-  databaseURL: "https://TEN_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "TEN_PROJECT",
-  appId: "DAN_APP_ID_CUA_PROJECT"
+  apiKey: "AIzaSyDf66je79wf7J31bfZ0qx5VsqBdoQyTRsA",
+  authDomain: "dau-vui-1vs1.firebaseapp.com",
+  databaseURL: "https://dau-vui-1vs1-default-rtdb.firebaseio.com",
+  projectId: "dau-vui-1vs1",
+  storageBucket: "dau-vui-1vs1.firebasestorage.app",
+  messagingSenderId: "261471198978",
+  appId: "1:261471198978:web:b759adf6e96f9cb3942c1b",
+  measurementId: "G-Z2CSNMLCZ3"
 };
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
 const $ = id => document.getElementById(id);
-const show = id => $(id).classList.remove("hidden");
-const hide = id => $(id).classList.add("hidden");
-const status = msg => $("status").textContent = msg;
+let uid=null, roomId=null, slot=null, roomData=null;
+let stopListening=null, questions=[], index=0, score=0, locked=false;
 
-let db, auth, uid = null;
-let roomCode = "";
-let room = null;
-let unsubscribeRoom = null;
-let selectedLevel = 0;
-let localReady = false;
-let advancing = false;
-
-const questionBank = [
- {l:1,q:"2 + 3 bằng bao nhiêu?",a:["4","5","6","7"],c:1},
- {l:1,q:"Một tuần có bao nhiêu ngày?",a:["5","6","7","8"],c:2},
- {l:2,q:"12 × 3 bằng bao nhiêu?",a:["36","32","30","42"],c:0},
- {l:2,q:"Thủ đô Việt Nam là thành phố nào?",a:["Huế","Đà Nẵng","Hà Nội","Cần Thơ"],c:2},
- {l:3,q:"Số nào là số nguyên tố?",a:["9","15","17","21"],c:2},
- {l:3,q:"100 chia 4 bằng bao nhiêu?",a:["20","25","30","40"],c:1},
- {l:4,q:"Hành tinh nào gần Mặt Trời nhất?",a:["Sao Kim","Sao Thủy","Trái Đất","Sao Hỏa"],c:1},
- {l:4,q:"Một giờ có bao nhiêu giây?",a:["600","1800","3600","6000"],c:2},
- {l:5,q:"Căn bậc hai của 144 là bao nhiêu?",a:["10","11","12","14"],c:2},
- {l:5,q:"Kim loại nào có ký hiệu hóa học Fe?",a:["Đồng","Sắt","Bạc","Vàng"],c:1},
- {l:6,q:"Số tiếp theo: 2, 4, 8, 16, ...",a:["18","24","30","32"],c:3},
- {l:6,q:"Một tam giác có tổng ba góc bằng bao nhiêu?",a:["90°","180°","270°","360°"],c:1},
- {l:7,q:"15% của 200 bằng bao nhiêu?",a:["15","20","30","40"],c:2},
- {l:7,q:"Hành tinh lớn nhất Hệ Mặt Trời?",a:["Trái Đất","Sao Thổ","Sao Mộc","Sao Hải Vương"],c:2},
- {l:8,q:"Số nào chia hết cho cả 3 và 5?",a:["22","25","30","32"],c:2},
- {l:8,q:"Nếu hôm nay là thứ Hai, 10 ngày nữa là thứ mấy?",a:["Thứ Tư","Thứ Năm","Thứ Sáu","Chủ Nhật"],c:1},
- {l:9,q:"Nếu x + 7 = 20 thì x bằng bao nhiêu?",a:["11","12","13","14"],c:2},
- {l:9,q:"Số tiếp theo: 1, 1, 2, 3, 5, 8, ...",a:["11","12","13","16"],c:2},
- {l:10,q:"Một vật giá 80.000đ giảm 25%. Giá mới là?",a:["20.000đ","55.000đ","60.000đ","65.000đ"],c:2},
- {l:10,q:"Có 3 hộp, chỉ 1 hộp có quà. Thử từng hộp theo thứ tự, trường hợp xấu nhất cần mở mấy hộp?",a:["1","2","3","4"],c:2}
+const bank=[
+["Hành tinh nào được gọi là hành tinh đỏ?",["Sao Kim","Sao Hỏa","Sao Mộc","Sao Thổ"],1],
+["Một tuần có bao nhiêu ngày?",["5","6","7","8"],2],
+["Thủ đô Nhật Bản là gì?",["Tokyo","Osaka","Kyoto","Nagoya"],0],
+["12 nhân 5 bằng bao nhiêu?",["50","55","60","65"],2],
+["Loài nào là động vật có vú?",["Ếch","Dơi","Rùa","Cá mập"],1],
+["Nước đóng băng ở khoảng bao nhiêu độ C?",["0","10","50","100"],0],
+["Việt Nam thuộc châu lục nào?",["Châu Âu","Châu Á","Châu Phi","Châu Mỹ"],1],
+["Một giờ có bao nhiêu phút?",["30","45","60","100"],2],
+["Cây thường hút nước qua bộ phận nào?",["Hoa","Lá","Rễ","Quả"],2],
+["Trái Đất quay quanh vật thể nào?",["Mặt Trăng","Mặt Trời","Sao Hỏa","Sao Kim"],1],
+["100 chia 4 bằng bao nhiêu?",["20","25","40","50"],1],
+["Từ nào chỉ màu sắc?",["Nhanh","Xanh","Chạy","Bàn"],1],
+["Con người thường dùng bộ phận nào để nghe?",["Mắt","Tai","Mũi","Tay"],1],
+["Một năm thường có bao nhiêu tháng?",["10","11","12","13"],2],
+["Hình tam giác có bao nhiêu cạnh?",["2","3","4","5"],1],
+["Con vật nào thường kêu meo meo?",["Chó","Mèo","Vịt","Ngựa"],1],
+["Mặt Trời mọc ở hướng nào?",["Đông","Tây","Nam","Bắc"],0],
+["Một ngày có bao nhiêu giờ?",["12","18","24","30"],2]
 ];
 
-function escapeHTML(value) {
- return String(value ?? "").replace(/[&<>"']/g, ch => ({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[ch]));
+function say(s){$("message").textContent=s}
+function show(id,on=true){$(id).classList.toggle("hidden",!on)}
+function makeCode(){
+ const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+ return Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join("");
+}
+function nameValue(){return $("name").value.trim().slice(0,20)}
+function roomRef(){return ref(db,"rooms/"+roomId)}
+function shuffled(seed){
+ let a=bank.map((q,i)=>({id:i,q:q[0],a:q[1],correct:q[2]}));
+ let n=seed>>>0;
+ for(let i=a.length-1;i>0;i--){
+  n=(1664525*n+1013904223)>>>0;
+  let j=n%(i+1);[a[i],a[j]]=[a[j],a[i]];
+ }
+ return a.slice(0,5);
+}
+function myRoom(){return roomData?.players||{}}
+
+async function login(){
+ if(uid)return;
+ const credential=await signInAnonymously(auth);
+ uid=credential.user.uid;
+}
+function error(e){
+ console.error(e);
+ if(e.code==="auth/api-key-not-valid.-please-pass-a-valid-api-key.")
+  say("API Key không hợp lệ. Kiểm tra Firebase Project settings → Your apps.");
+ else if(e.code==="auth/operation-not-allowed")
+  say("Hãy bật Authentication → Sign-in method → Anonymous.");
+ else if(String(e.message).includes("PERMISSION_DENIED")||String(e.code).includes("PERMISSION_DENIED"))
+  say("Firebase Database từ chối truy cập. Hãy kiểm tra Realtime Database Rules.");
+ else say("Lỗi: "+(e.message||e.code||"Không rõ nguyên nhân"));
 }
 
-try {
- const app = initializeApp(firebaseConfig);
- auth = getAuth(app);
- db = getDatabase(app);
-
- onAuthStateChanged(auth, user => {
-  if (user) {
-   uid = user.uid;
-   status("Đã kết nối. Ông có thể tạo phòng hoặc tham gia phòng!");
-   show("home");
-  } else {
-   signInAnonymously(auth).catch(err => {
-    status("Không đăng nhập được Firebase: " + err.message +
-     "\nKiểm tra Authentication > Sign-in method > Anonymous.");
-   });
+async function createRoom(){
+ const name=nameValue();
+ if(!name)return say("Ông hãy nhập tên trước nhé.");
+ $("create").disabled=true;
+ try{
+  await login();
+  let code=null;
+  for(let i=0;i<10;i++){
+   const candidate=makeCode();
+   const snap=await get(ref(db,"rooms/"+candidate));
+   if(!snap.exists()){code=candidate;break}
   }
- });
-} catch (err) {
- status("Lỗi khởi tạo Firebase: " + err.message +
-  "\nKiểm tra lại firebaseConfig trong code.");
-}
-
-function roomRef() {
- return ref(db, "rooms/" + roomCode);
-}
-function playerRef() {
- return ref(db, "rooms/" + roomCode + "/players/" + uid);
-}
-function playersList() {
- return Object.entries(room?.players || {});
-}
-function myPlayer() {
- return room?.players?.[uid] || null;
-}
-function getQuestions(level) {
- return questionBank.filter(q => q.l <= level);
-}
-function codeGenerator() {
- return Math.random().toString(36).slice(2,8).toUpperCase();
-}
-
-async function enterRoom(code) {
- roomCode = code.toUpperCase();
- localReady = false;
- selectedLevel = 0;
-
- if (unsubscribeRoom) unsubscribeRoom();
-
- const snap = await get(roomRef());
- if (!snap.exists()) throw new Error("Phòng không tồn tại.");
-
- room = snap.val();
- if (!room.players?.[uid] && playersList().length >= 2)
-  throw new Error("Phòng đã đủ 2 người chơi.");
-
- if (!room.players?.[uid]) {
-  await update(ref(db, "rooms/" + roomCode + "/players"), {
-   [uid]: {
-    name: $("playerName").value.trim() || "Người chơi",
-    level: 0, ready: false, score: 0
+  if(!code)throw Error("Không tạo được mã phòng. Thử lại nhé.");
+  roomId=code;slot="p1";score=0;index=0;
+  await set(roomRef(),{
+   status:"waiting",
+   host:uid,
+   createdAt:Date.now(),
+   players:{
+    p1:{uid,name,score:0,done:false},
+    p2:null
    }
   });
+  listen();
+  show("home",false);show("room");show("game",false);show("result",false);
+  say("Tạo phòng thành công!");
+ }catch(e){error(e)}
+ finally{$("create").disabled=false}
+}
+
+async function joinRoom(){
+ const name=nameValue(),code=$("code").value.trim().toUpperCase();
+ if(!name)return say("Ông hãy nhập tên trước nhé.");
+ if(!/^[A-Z0-9]{6}$/.test(code))return say("Mã phòng phải có 6 ký tự.");
+ $("join").disabled=true;
+ try{
+  await login();
+  roomId=code;
+  const result=await runTransaction(roomRef(),r=>{
+   if(!r||r.status!=="waiting"||r.players?.p2)return;
+   if(r.players?.p1?.uid===uid)return r;
+   r.players.p2={uid,name,score:0,done:false};
+   return r;
+  });
+  if(!result.committed)throw Error("Phòng không tồn tại, đã đủ người hoặc trận đã bắt đầu.");
+  const r=result.snapshot.val();
+  slot=r.players.p1.uid===uid?"p1":"p2";
+  if(slot==="p1"&&r.players.p2?.uid!==uid)
+   throw Error("Ông đã là người tạo phòng này.");
+  listen();
+  show("home",false);show("room");show("game",false);show("result",false);
+  say("Đã vào phòng "+code);
+ }catch(e){error(e)}
+ finally{$("join").disabled=false}
+}
+
+function listen(){
+ if(stopListening)stopListening();
+ stopListening=onValue(roomRef(),snap=>{
+  if(!snap.exists()){say("Không tìm thấy phòng.");return}
+  roomData=snap.val();
+  renderRoom();
+ },error);
+}
+function renderRoom(){
+ const p=myRoom();
+ $("roomCode").textContent=roomId;
+ $("name1").textContent=p.p1?.name||"Đang chờ...";
+ $("name2").textContent=p.p2?.name||"Đang chờ...";
+ $("score1").textContent=(p.p1?.score||0)+" điểm";
+ $("score2").textContent=(p.p2?.score||0)+" điểm";
+ const ready=!!p.p1&&!!p.p2;
+ show("start",slot==="p1"&&ready&&roomData.status==="waiting");
+ if(roomData.status==="waiting")
+  $("roomStatus").textContent=ready?"Đã đủ người! Người tạo phòng có thể bắt đầu.":"Đang chờ người chơi thứ hai...";
+ if(roomData.status==="playing"){
+  $("roomStatus").textContent="Trận đấu đang diễn ra.";
+  if(questions.length===0)startLocalGame();
+  checkFinished();
  }
-
- hide("home");
- show("lobby");
- hide("game");
- hide("result");
- $("roomCode").textContent = roomCode;
- status("Đã vào phòng " + roomCode);
-
- unsubscribeRoom = onValue(roomRef(), snap => {
-  if (!snap.exists()) {
-   status("Phòng không còn tồn tại.");
-   return;
-  }
-  room = snap.val();
-  drawRoom();
-  if (room.state === "playing") drawGame();
-  else if (room.state === "finished") drawResult();
-  else {
-   show("lobby");
-   hide("game");
-   hide("result");
-  }
+ if(roomData.status==="finished")renderResult();
+}
+async function startMatch(){
+ if(slot!=="p1"||!roomData?.players?.p2)return;
+ try{
+  const seed=Math.floor(Math.random()*2000000000);
+  const q1=shuffled(seed).map(q=>q.id);
+  const q2=shuffled(seed^987654321).map(q=>q.id);
+  const result=await runTransaction(roomRef(),r=>{
+   if(!r||r.status!=="waiting"||!r.players?.p2)return;
+   r.status="playing";
+   r.questionSets={p1:q1,p2:q2};
+   r.players.p1.score=0;r.players.p1.done=false;
+   r.players.p2.score=0;r.players.p2.done=false;
+   return r;
+  });
+  if(!result.committed)say("Không thể bắt đầu. Hãy kiểm tra phòng.");
+ }catch(e){error(e)}
+}
+function startLocalGame(){
+ const ids=roomData.questionSets?.[slot];
+ if(!Array.isArray(ids)||!ids.length)return;
+ questions=ids.map(i=>bank[i]).filter(Boolean).map(q=>({q:q[0],a:q[1],correct:q[2]}));
+ index=0;score=0;locked=false;
+ show("game");show("result",false);drawQuestion();
+}
+function drawQuestion(){
+ if(index>=questions.length){finishGame();return}
+ const q=questions[index];locked=false;
+ $("round").textContent=`Câu ${index+1}/${questions.length}`;
+ $("points").textContent="Điểm của bạn: "+score;
+ $("question").textContent=q.q;
+ $("answerStatus").textContent="Chọn một đáp án.";
+ show("next",false);
+ const wrap=$("answers");wrap.replaceChildren();
+ q.a.forEach((answer,i)=>{
+  const b=document.createElement("button");
+  b.className="answer";b.textContent=String.fromCharCode(65+i)+". "+answer;
+  b.onclick=()=>answerQuestion(i);
+  wrap.appendChild(b);
  });
 }
-
-async function createRoom() {
- if (!uid) throw new Error("Đang đăng nhập Firebase, chờ một chút nhé.");
- const name = $("playerName").value.trim() || "Người chơi 1";
- roomCode = codeGenerator();
-
- await set(roomRef(), {
-  host: uid,
-  state: "lobby",
-  level: 0,
-  questionIndex: 0,
-  questions: [],
-  answers: {},
-  players: {
-   [uid]: {name, level: 0, ready: false, score: 0}
-  }
+async function answerQuestion(i){
+ if(locked)return;
+ locked=true;
+ const q=questions[index],correct=i===q.correct;
+ if(correct)score++;
+ [...$("answers").children].forEach((b,n)=>{
+  b.disabled=true;
+  if(n===q.correct)b.classList.add("good");
+  if(n===i&&!correct)b.classList.add("bad");
  });
- await enterRoom(roomCode);
+ $("points").textContent="Điểm của bạn: "+score;
+ $("answerStatus").textContent=correct?"Chính xác! +1 điểm":"Chưa đúng!";
+ show("next");
+ try{
+  await update(ref(db,`rooms/${roomId}/players/${slot}`),{score,done:false});
+ }catch(e){error(e)}
 }
-
-function drawRoom() {
- if (!room) return;
-
- $("players").innerHTML = playersList().map(([id,p]) =>
-  (id === room.host ? "👑 " : "⚔️ ") +
-  escapeHTML(p.name) + (p.ready ? " — Đã sẵn sàng" : " — Chưa sẵn sàng")
- ).join("<br>");
-
- $("levels").innerHTML = "";
- for (let i=1;i<=10;i++) {
-  const b = document.createElement("button");
-  b.textContent = "Cấp " + i;
-  if (selectedLevel === i) b.classList.add("selected");
-  b.onclick = async () => {
-   try {
-    selectedLevel = i;
-    localReady = false;
-    await update(playerRef(), {level:i, ready:false});
-    drawRoom();
-   } catch(e) { status("Lỗi chọn cấp: " + e.message); }
-  };
-  $("levels").appendChild(b);
- }
-
- const list = playersList();
- const levels = list.map(([,p]) => Number(p.level || 0));
- const sameLevel = list.length === 2 && levels[0] > 0 && levels[0] === levels[1];
- $("levelInfo").textContent = sameLevel
-  ? "Hai người đã chọn cấp " + levels[0] + ". Hãy xác nhận sẵn sàng!"
-  : "Chờ đủ 2 người và chọn cùng một cấp độ.";
-
- $("readyBtn").disabled = !sameLevel || !!myPlayer()?.ready;
- $("readyBtn").textContent = myPlayer()?.ready
-  ? "Đã sẵn sàng ✓" : "Tôi đã sẵn sàng";
-
- const allReady = list.length === 2 && sameLevel &&
-  list.every(([,p]) => p.ready);
- $("startBtn").classList.toggle("hidden", !(uid === room.host && allReady));
+async function nextQuestion(){
+ if(!locked)return;
+ index++;
+ if(index>=questions.length)await finishGame();
+ else drawQuestion();
 }
-
-async function startGame() {
- const list = playersList();
- if (uid !== room.host || list.length !== 2 ||
-     !list.every(([,p]) => p.ready && p.level === list[0][1].level)) {
-  throw new Error("Cả hai phải chọn cùng cấp độ và sẵn sàng.");
- }
- const level = list[0][1].level;
- const questions = getQuestions(level);
- await update(roomRef(), {
-  state: "playing", level,
-  questionIndex: 0,
-  questions,
-  answers: {},
-  startedAt: Date.now()
- });
- await update(ref(db, "rooms/" + roomCode + "/players"), {
-  [list[0][0]]: {...list[0][1], score:0},
-  [list[1][0]]: {...list[1][1], score:0}
- });
+async function finishGame(){
+ show("game",false);show("room");
+ try{
+  await update(ref(db,`rooms/${roomId}/players/${slot}`),{score,done:true});
+  $("roomStatus").textContent="Bạn đã hoàn thành! Đang chờ đối thủ...";
+  await checkFinished();
+ }catch(e){error(e)}
 }
-
-function drawGame() {
- if (!room || room.state !== "playing") return;
- show("game"); hide("lobby"); hide("result");
-
- const qs = room.questions || [];
- const index = Number(room.questionIndex || 0);
-
- if (index >= qs.length) {
-  if (uid === room.host) {
-   update(roomRef(), {state:"finished"}).catch(e => status(e.message));
-  }
-  return;
- }
-
- const q = qs[index];
- $("round").textContent = "Cấp " + room.level +
-  " · Câu " + (index+1) + "/" + qs.length +
-  " · Điểm của ông: " + (myPlayer()?.score || 0);
- $("question").textContent = q.q;
- $("answers").innerHTML = "";
-
- const already = !!room.answers?.[uid];
- q.a.forEach((answer,i) => {
-  const b = document.createElement("button");
-  b.className = "answer";
-  b.textContent = String.fromCharCode(65+i) + ". " + answer;
-  b.disabled = already;
-  b.onclick = () => submitAnswer(i);
-  $("answers").appendChild(b);
- });
- const answered = Object.keys(room.answers || {}).length;
- $("answerStatus").textContent = already
-  ? "Đã trả lời. Đang chờ đối thủ..."
-  : "Đối thủ đã trả lời: " + answered + "/2";
-}
-
-async function submitAnswer(choice) {
- if (!room || room.state !== "playing" || room.answers?.[uid]) return;
- const index = Number(room.questionIndex || 0);
- const q = room.questions[index];
- if (!q) return;
-
- const correct = choice === q.c;
- const changes = {};
- changes["rooms/" + roomCode + "/answers/" + uid] = {
-  choice, correct, at: Date.now()
- };
- if (correct) {
-  changes["rooms/" + roomCode + "/players/" + uid + "/score"] =
-   (myPlayer()?.score || 0) + 1;
- }
- try {
-  await update(ref(db), changes);
- } catch(e) {
-  status("Không gửi được câu trả lời: " + e.message);
- }
-}
-
-function drawResult() {
- if (!room) return;
- show("result"); hide("lobby"); hide("game");
- const list = playersList().sort((a,b) => (b[1].score||0)-(a[1].score||0));
- if (list.length < 2) {
-  $("winner").textContent = "Chưa đủ người chơi.";
-  return;
- }
- const [p1,p2] = list;
- const s1 = p1[1].score || 0, s2 = p2[1].score || 0;
- $("winner").textContent = s1 === s2 ? "🤝 Hòa nhau!" :
-  "🏆 " + p1[1].name + " chiến thắng!";
- $("finalScores").textContent =
-  p1[1].name + ": " + s1 + " điểm\n" +
-  p2[1].name + ": " + s2 + " điểm";
-}
-
-$("createBtn").onclick = async () => {
- try { await createRoom(); }
- catch(e) { status("Không tạo được phòng: " + e.message); }
-};
-
-$("joinBtn").onclick = async () => {
- try {
-  const code = $("roomInput").value.trim();
-  if (!code) throw new Error("Ông nhập mã phòng trước nhé.");
-  if (!uid) throw new Error("Đang đăng nhập Firebase, chờ một chút.");
-  const snap = await get(ref(db, "rooms/" + code.toUpperCase()));
-  if (!snap.exists()) throw new Error("Không tìm thấy phòng này.");
-  roomCode = code.toUpperCase();
-  const data = snap.val();
-  if (Object.keys(data.players || {}).length >= 2 &&
-      !data.players[uid]) throw new Error("Phòng đã đủ người.");
-  await enterRoom(code);
- } catch(e) { status("Không vào được phòng: " + e.message); }
-};
-
-$("readyBtn").onclick = async () => {
- try {
-  if (!selectedLevel) throw new Error("Ông chọn cấp độ trước nhé.");
-  await update(playerRef(), {ready:true});
- } catch(e) { status("Chưa sẵn sàng được: " + e.message); }
-};
-
-$("startBtn").onclick = async () => {
- try { await startGame(); }
- catch(e) { status("Không bắt đầu được: " + e.message); }
-};
-
-$("copyBtn").onclick = async () => {
- try {
-  await navigator.clipboard.writeText(roomCode);
-  status("Đã sao chép mã phòng: " + roomCode);
- } catch(e) {
-  status("Mã phòng của ông là: " + roomCode + " (hãy sao chép thủ công)");
- }
-};
-
-$("againBtn").onclick = () => {
- if (unsubscribeRoom) unsubscribeRoom();
- unsubscribeRoom = null;
- roomCode = "";
- room = null;
- selectedLevel = 0;
- localReady = false;
- hide("lobby"); hide("game"); hide("result");
- show("home");
- status("Đã trở về sảnh. Ông có thể tạo phòng mới.");
-};
-
-/* Máy chủ chỉ định host chuyển câu khi cả hai đã trả lời. */
-setInterval(async () => {
- if (!room || room.state !== "playing" || uid !== room.host || advancing) return;
- const answers = room.answers || {};
- const playerIds = Object.keys(room.players || {});
- if (playerIds.length !== 2 || !playerIds.every(id => answers[id])) return;
-
- advancing = true;
- const oldIndex = Number(room.questionIndex || 0);
- try {
-  await new Promise(resolve => setTimeout(resolve, 900));
-  const snap = await get(roomRef());
-  const latest = snap.val();
-  if (latest?.state === "playing" &&
-      Number(latest.questionIndex || 0) === oldIndex) {
-   const next = oldIndex + 1;
-   await update(roomRef(), {
-    questionIndex: next,
-    answers: {}
+async function checkFinished(){
+ const p=myRoom();
+ if(p.p1?.done&&p.p2?.done&&roomData.status==="playing"){
+  try{
+   await runTransaction(roomRef(),r=>{
+    if(!r||r.status!=="playing"||!r.players?.p1?.done||!r.players?.p2?.done)return;
+    r.status="finished";
+    r.finishedAt=Date.now();
+    return r;
    });
-   if (next >= (latest.questions || []).length) {
-    await update(roomRef(), {state:"finished"});
-   }
-  }
- } catch(e) {
-  status("Lỗi chuyển câu: " + e.message);
- } finally {
-  advancing = false;
+  }catch(e){error(e)}
  }
-}, 500);
+}
+function renderResult(){
+ const p=myRoom(),a=p.p1?.score||0,b=p.p2?.score||0;
+ show("game",false);show("room",false);show("result");
+ $("finalName1").textContent=p.p1?.name||"Người chơi 1";
+ $("finalName2").textContent=p.p2?.name||"Người chơi 2";
+ $("finalScore1").textContent=a+" điểm";
+ $("finalScore2").textContent=b+" điểm";
+ $("winner").textContent=a===b?"🤝 Hai người hòa!":a>b?`🏆 ${p.p1.name} chiến thắng!`:`🏆 ${p.p2.name} chiến thắng!`;
+}
+async function copyCode(){
+ try{
+  await navigator.clipboard.writeText(roomId);
+  say("Đã sao chép mã phòng.");
+ }catch{say("Mã phòng của ông là "+roomId+". Hãy ghi lại để gửi bạn.")}
+}
+function leave(){
+ if(stopListening){stopListening();stopListening=null}
+ roomId=null;slot=null;roomData=null;questions=[];index=0;score=0;
+ show("home");show("room",false);show("game",false);show("result",false);
+ say("Đã rời phòng.");
+}
+
+$("create").onclick=createRoom;
+$("join").onclick=joinRoom;
+$("start").onclick=startMatch;
+$("next").onclick=nextQuestion;
+$("copy").onclick=copyCode;
+$("leave").onclick=leave;
+$("again").onclick=leave;
+$("code").addEventListener("input",e=>e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6));
+
+signInAnonymously(auth)
+ .then(credential=>{uid=credential.user.uid;say("Firebase đã kết nối. Nhập tên để bắt đầu!");})
+ .catch(error);
 </script>
 </body>
- </html>
- 
+  </html>
+  
